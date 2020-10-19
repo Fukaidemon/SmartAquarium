@@ -98,7 +98,7 @@ public:
         return false;
     }
 
-    void sendMQTTMessage(const char* &topic, const char* &messageToSend){
+    void sendMQTTMessage(const char* topic, const char* messageToSend){
         client.publish(topic, messageToSend, true);
     }
 
@@ -108,3 +108,4 @@ public:
 void callback(char* topic, byte* payload, unsigned int length) {
     payloadCallback = payload;
 }
+

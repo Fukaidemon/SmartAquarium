@@ -29,7 +29,10 @@ public:
     }
     // Updates the state of the water level, to call in the loop
     void update(){
-        state = digitalRead(pin);
+        uint8_t newState = digitalRead(pin);
+        if (newState != state){
+            state = digitalRead(pin);
+        }  
     }
 
     uint8_t getState() const{return state;}

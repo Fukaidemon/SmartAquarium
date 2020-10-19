@@ -1,60 +1,38 @@
 #include <Arduino.h>
 #include "include/ConnectivityManager.h"
-#include "include/WaterLevelSensor.h"
 #include "include/TemperatureSensor.h"
+#include "WaterLevelManager.h"
 
-ConnectivityManager* CM;
+TemperatureSensor* TS = new TemperatureSensor(A0);
+ConnectivityManager* CM = new ConnectivityManager();
 
-WaterLevelSensor* WLS_Level1;
-WaterLevelSensor* WLS_Level2;
-WaterLevelSensor* WLS_Level3;
-
-TemperatureSensor* TS;
-
-// enum WaterLevel{
-//   High,
-//   Mid,
-//   Low
-// }
+void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
+  if(WL_Changed){
+    if (sendMQTT)
+      CM->sendMQTTMessage("IOT_AQUA", getWaterLevelAsString().c_str());
+    if (debugSerial){
+      Serial.print("Water level changed to : ");
+      Serial.print(getWaterLevelAsString());
+      Serial.println();
+    }
+  }
+}
 
 void setup() {
-
-  CM = new ConnectivityManager();
   CM->connect();
   CM->runServer();
   CM->connectToMQTT("esp32", "IOT_AQUA");
-
-  WLS_Level1 = new WaterLevelSensor(8); // 8 is the pin connected to the Water Level Sensor
-  WLS_Level2 = new WaterLevelSensor(9); 
-  WLS_Level3 = new WaterLevelSensor(10); 
-
-  TS = new TemperatureSensor(A0);
 }
 
 void loop() {
-  
-  WLS_Level1->update();
-  WLS_Level2->update();
-  WLS_Level3->update();
 
+  WaterLevelLoop();
   TS->update();
 
   Serial.print("Temperature : ");
   Serial.print(TS->getTempInCelcius());
   Serial.println();
-  // CM->sendMQTTMessage("IOT_AQUA", String(TS->getTempInCelcius()));
+  CM->sendMQTTMessage("IOT_AQUA", String(TS->getTempInCelcius()).c_str());
   
-  Serial.print("WaterLevel 1 : ");
-  Serial.print(WLS_Level1->getState());
-  Serial.println();
-
-  Serial.print("WaterLevel 2 : ");
-  Serial.print(WLS_Level2->getState());
-  Serial.println();
-
-  Serial.print("WaterLevel 3 : ");
-  Serial.print(WLS_Level3->getState());
-  Serial.println();
-
 }
 
