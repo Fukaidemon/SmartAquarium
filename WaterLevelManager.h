@@ -20,10 +20,16 @@ WaterLevelSensor* WLS_Level3 = new WaterLevelSensor(WATER_LEVEL_PIN3);
 WaterLevel WL = WaterLevel::High_Level;
 uint8_t WL_Changed = false;
 
+// This event is called when the water level changes, to add the functionalities required here.
+void OnChange(const WaterLevel &newWaterLevel){
+    
+}
+
 void setWaterLevel(const WaterLevel& newWaterLevel){
     if (WL != newWaterLevel){
         WL = newWaterLevel;
         OnChange(newWaterLevel);
+        WL_Changed = true;
     }
 }
 
@@ -31,16 +37,11 @@ WaterLevel getWaterLevel(){
     return WL;
 }
 
-String getWaterLevelAsString() const {
+String getWaterLevelAsString() {
     if (WL == WaterLevel::High_Level) return "High_Level";
     else if (WL == WaterLevel::Mid_Level) return "Mid_Level";
     else if (WL == WaterLevel::Low_Level) return "Low_Level";
     else if (WL == WaterLevel::VeryLow_Level) return "VeryLow_Level";
-}
-
-// This event is called when the water level changes, to add the functionalities required here.
-void OnChange(const WaterLevel &newWaterLevel){
-    
 }
 
 // This function has to be called in the main loop of the Arduino
