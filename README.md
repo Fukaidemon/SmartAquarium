@@ -1,5 +1,5 @@
 # SmartAquarium
-This is an academic project for a Smart Aquarium (IOT)
+SmartAquarium is an academic project for a Smart Aquarium (IOT)
 
 ## Functionalities
 - Water Oxygenating
