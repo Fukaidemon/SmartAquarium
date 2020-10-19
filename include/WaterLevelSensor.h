@@ -31,5 +31,7 @@ public:
     void update(){
         state = digitalRead(pin);
     }
+
+    uint8_t getState() const{return state;}
     
 };
