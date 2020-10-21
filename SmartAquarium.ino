@@ -56,7 +56,7 @@ void setup() {
   clientName += macToStr(mac);
 
   // Connect to the MQTT server
-  CM->connectToMQTT(clientName, "IOTAQUA");
+  CM->connectToMQTT((char*)clientName.c_str(), "IOTAQUA");
 }
 
 void loop() {
