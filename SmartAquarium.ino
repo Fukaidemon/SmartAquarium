@@ -11,7 +11,7 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   if(WL_Changed){
     // Sends an MQTT message
     if (sendMQTT)
-      CM->sendMQTTMessage("IOT_AQUA", getWaterLevelAsString().c_str());
+      CM->sendMQTTMessage("IOTAQUA", getWaterLevelAsString().c_str());
     // Sends on the serial
     if (debugSerial){
       Serial.print("Water level changed to : ");
@@ -22,6 +22,22 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   }
 }
 
+//generate unique name from MAC addr
+    String macToStr(const uint8_t* mac){
+
+        String result;
+
+        for (int i = 0; i < 6; ++i) {
+            result += String(mac[i], 16);
+
+            if (i < 5){
+                result += ':';
+            }
+        }
+
+        return result;
+    }
+
 void setup() {
 
   // Init the Serial
@@ -29,9 +45,18 @@ void setup() {
 
   //Init the Connectivity Manager
   CM->connect();
-  CM->runServer();
-  CM->connectToMQTT("esp32", "IOT_AQUA");
 
+  delay(500);
+
+  // Generate client name based on MAC address and last 8 bits of microsecond counter
+  String clientName;
+  clientName += "esp8266-";
+  uint8_t mac[6];
+  WiFi.macAddress(mac);
+  clientName += macToStr(mac);
+
+  // Connect to the MQTT server
+  CM->connectToMQTT(clientName, "IOTAQUA");
 }
 
 void loop() {
