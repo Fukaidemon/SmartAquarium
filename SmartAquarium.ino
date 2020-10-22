@@ -38,34 +38,6 @@ String macToStr(const uint8_t* mac){
     return result;
 }
 
-
-void reconnect() {
-
-  //make sure we are connected to WIFI before attemping to reconnect to MQTT
-  if(WiFi.status() == WL_CONNECTED){
-  // Loop until we're reconnected to the MQTT server
-    while (!client.connected()) {
-      Serial.print("Attempting MQTT connection...");
-
-      // Generate client name based on MAC address and last 8 bits of microsecond counter
-      String clientName;
-      clientName += "esp8266-";
-      uint8_t mac[6];
-      WiFi.macAddress(mac);
-      clientName += macToStr(mac);
-
-      //if connected, subscribe to the topic(s) we want to be notified about
-      if (client.connect((char*) clientName.c_str())) {
-        Serial.print("\tMTQQ Connected");
-        client.subscribe("AQUAIOT");
-      }
-
-      //otherwise print failed for debugging
-      else{Serial.println("\tFailed."); abort();}
-    }
-  }
-}
-
 void setup() {
 
   // Init the Serial
@@ -84,9 +56,8 @@ void setup() {
   clientName += macToStr(mac);
 
   // Connect to the MQTT server
-  // CM->connectToMQTT((char*)clientName.c_str(), "5SLEAM");
+  CM->connectToMQTT((char*)clientName.c_str(), "5SLEAM");
 
-  reconnect();
 }
 
 
