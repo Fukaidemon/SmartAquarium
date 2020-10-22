@@ -2,8 +2,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-#define DEFAULT_SSID "TOPNETE136FE54"
-#define DEFAULT_PSWD "F57B95D1E6"
+#define DEFAULT_SSID "Belhassen"
+#define DEFAULT_PSWD "09091995"
 #define DEFAULT_MQTT "broker.hivemq.com"
 
 
@@ -11,6 +11,9 @@ void callback(char* topic, byte* payload, unsigned int length);
 WiFiClient wifiClient;
 PubSubClient client(DEFAULT_MQTT, 1883, callback, wifiClient);
 byte* payloadCallback;
+void callback(char* topic, byte* payload, unsigned int length) {
+    payloadCallback = payload;
+}
 
 class ConnectivityManager{
 
@@ -76,26 +79,32 @@ public:
         Serial.print(Server.port());
     }
 
-    bool connectToMQTT(const char* clientName, const char* topic){
+    void connectToMQTT(char* clientName, char* topic){
         if(WiFi.status() == WL_CONNECTED){
+
+            Serial.print("MQTT client : ");
+            Serial.print (clientName);
+            Serial.println();
+            Serial.print ("MQTT topic : ");
+            Serial.print(topic);
+            Serial.println();
+
+            Serial.print("Attempting MQTT connection...");
+
             while (!client.connected()) {
-                
-                Serial.print("Attempting MQTT connection...");
+                Serial.print(".");
 
                 //if connected, subscribe to the topic(s) we want to be notified about
                 if (client.connect(clientName)) {
                     Serial.print("\tMTQQ Connected");
                     client.subscribe(topic);
-                    return true;
                 }
                 //otherwise print failed for debugging
                 else {
-                    Serial.println("\tFailed MQTT."); abort();
-                    return false;
+                    //Serial.println("\tFailed MQTT."); abort();
                 }
             }
         }
-        return false;
     }
 
     void sendMQTTMessage(const char* topic, const char* messageToSend){
@@ -104,8 +113,4 @@ public:
 
 
 };
-
-void callback(char* topic, byte* payload, unsigned int length) {
-    payloadCallback = payload;
-}
 
