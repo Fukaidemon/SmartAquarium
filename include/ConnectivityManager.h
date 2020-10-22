@@ -1,9 +1,11 @@
+#pragma once
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include "Utility.h"
 
-#define DEFAULT_SSID "Belhassen"
-#define DEFAULT_PSWD "09091995"
+#define DEFAULT_SSID "YOUR_SSID_HERE"
+#define DEFAULT_PSWD "YOUR_PSWD_HERE"
 #define DEFAULT_MQTT "broker.hivemq.com"
 
 
@@ -58,7 +60,6 @@ public:
     void connect(){
         Serial.print("Connecting to ");
         Serial.println(ssid);
-        WiFi.config(IP, DNS, Gateway, Subnet);
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED) {
             delay(500);
@@ -69,6 +70,7 @@ public:
 
     // Run a server using the Data already set in this class
     void runServer(){
+        // WiFi.config(IP, DNS, Gateway, Subnet);
         Server.begin();
         Serial.println("Server started");
         // Print the IP address
@@ -79,7 +81,34 @@ public:
         Serial.print(Server.port());
     }
 
-    void connectToMQTT(char* clientName, char* topic){
+    void connectToMQTT(char* topic){
+
+        // Generate client name based on MAC address and last 8 bits of microsecond counter
+        String clientName_str;
+        clientName_str += "esp8266-";
+        uint8_t mac[6];
+        WiFi.macAddress(mac);
+        clientName_str += macToStr(mac);
+        char* clientName = (char*) clientName_str.c_str();
+
+        //attempt to connect to the wifi if connection is lost
+        if(WiFi.status() != WL_CONNECTED){
+            //debug printing
+            Serial.print("Connecting to ");
+            Serial.println(ssid);
+
+            //loop while we wait for connection
+            while (WiFi.status() != WL_CONNECTED) {
+                delay(500);
+                Serial.print(".");
+            }
+
+            //print out some more debug once connected
+            Serial.println("");
+            Serial.println("WiFi connected");  
+            Serial.println("IP address: ");
+            Serial.println(WiFi.localIP());
+        }
         if(WiFi.status() == WL_CONNECTED){
 
             Serial.print("MQTT client : ");
@@ -93,15 +122,14 @@ public:
 
             while (!client.connected()) {
                 Serial.print(".");
-
                 //if connected, subscribe to the topic(s) we want to be notified about
                 if (client.connect(clientName)) {
-                    Serial.print("\tMTQQ Connected");
+                    Serial.println("\tMQTT Connected!");
                     client.subscribe(topic);
                 }
                 //otherwise print failed for debugging
                 else {
-                    //Serial.println("\tFailed MQTT."); abort();
+                    Serial.println("\tFailed to connect  to the MQTT server."); abort();
                 }
             }
         }
@@ -110,7 +138,5 @@ public:
     void sendMQTTMessage(const char* topic, const char* messageToSend){
         client.publish(topic, messageToSend, true);
     }
-
-
 };
 

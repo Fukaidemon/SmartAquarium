@@ -1,10 +1,12 @@
+#pragma once
+
 #include <Arduino.h>
 #include "include/ConnectivityManager.h"
 #include "include/TemperatureSensor.h"
 #include "WaterLevelManager.h"
 
 TemperatureSensor* TS = new TemperatureSensor(A0);
-ConnectivityManager* CM = new ConnectivityManager();
+ConnectivityManager* CM = new ConnectivityManager("TOPNETE136FE54", "F57B95D1E6");
 
 void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   // Checks if the Water level has changed
@@ -22,44 +24,17 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   }
 }
 
-//generate unique name from MAC addr
-String macToStr(const uint8_t* mac){
-
-    String result;
-
-    for (int i = 0; i < 6; ++i) {
-        result += String(mac[i], 16);
-
-        if (i < 5){
-            result += ':';
-        }
-    }
-
-    return result;
-}
-
 void setup() {
 
   // Init the Serial
   Serial.begin(115200);
-
   //Init the Connectivity Manager
   CM->connect();
-
-  delay(500);
-
-  // Generate client name based on MAC address and last 8 bits of microsecond counter
-  String clientName;
-  clientName += "esp8266-";
-  uint8_t mac[6];
-  WiFi.macAddress(mac);
-  clientName += macToStr(mac);
-
+  // 0.1 sec delay
+  delay(100);
   // Connect to the MQTT server
-  CM->connectToMQTT((char*)clientName.c_str(), "5SLEAM");
-
+  CM->connectToMQTT("AQUAIOT");
 }
-
 
 void loop() {
 
@@ -68,13 +43,12 @@ void loop() {
 
   // Temperature Sensor loop
   TS->update();
-  
+
   // Displays the Data of the Temperature 
   // TODO : Temperature sends data only when going above or lower a threshold compared to the last value sent
   Serial.print("Temperature : ");
   Serial.print(TS->getTempInCelcius());
   Serial.println();
+  delay(500);
   CM->sendMQTTMessage("AQUAIOT", String(TS->getTempInCelcius()).c_str());
 }
-
-
