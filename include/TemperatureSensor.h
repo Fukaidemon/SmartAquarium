@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 
 #define DEFAULT_TS_PIN A0

@@ -4,8 +4,8 @@
 #include "include/ConnectivityManager.h"
 #include "include/TemperatureSensor.h"
 #include "WaterLevelManager.h"
+#include "TemperatureManager.h"
 
-TemperatureSensor* TS = new TemperatureSensor(A0, .3f);
 ConnectivityManager* CM = new ConnectivityManager("TOPNETE136FE54", "F57B95D1E6");
 
 void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
@@ -24,20 +24,18 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   }
 }
 
-void TemperatureLoop(const uint8_t& sendMQTT, const uint8_t& debugSerial){
-    float oldValue = TS->getTempInCelcius();
-    TS->update();
-    float newValue = TS->getTempInCelcius();
-    if ( abs(oldValue - newValue) > TS->thershold ){
-        // Sends an MQTT message
+void ManageTemperatureData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
+    if (TMP_Changed){
+      // Sends an MQTT message
       if (sendMQTT)
-        CM->sendMQTTMessage("AQUAIOT", String(newValue).c_str());
+        CM->sendMQTTMessage("AQUAIOT", String(temperature).c_str());
       // Sends on the serial
       if (debugSerial){
         Serial.print("Temperature : ");
-        Serial.print(String(newValue));
+        Serial.print(String(temperature));
         Serial.println();
       }
+      TMP_Changed = false;
     }
 }
 
@@ -57,6 +55,8 @@ void loop() {
   WaterLevelLoop();
   // Water level sensors Display/Send Data
   ManageWaterLevelData(true, true);
-  // Temperature Sensor loop and Display/Send Data
-  TemperatureLoop(true, true);  
+  // Temperature sensor loop
+  TemperatureLoop();
+  // Temperature sensor Display/Send Data 
+  ManageTemperatureData(true, true);
 }

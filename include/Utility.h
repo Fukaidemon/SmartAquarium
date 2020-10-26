@@ -27,3 +27,14 @@ char* getNameAndAddress(){
     clientName += macToStr(mac);
     return (char*) clientName.c_str();
 }
+
+float interpolateFloat(const float &currentValue, const float &target, const float &step){
+    if (currentValue < target){
+        if ((currentValue + step) > target) return target;
+        else return currentValue + step; 
+    }
+    else if (currentValue > target){
+        if ((currentValue - step) < target) return target;
+        else return currentValue - step; 
+    }
+}
