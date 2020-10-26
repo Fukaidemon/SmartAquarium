@@ -136,6 +136,9 @@ public:
     }
 
     void sendMQTTMessage(const char* topic, const char* messageToSend){
+        if (client.connected()){
+            client.publish(topic, messageToSend, true);
+        }
         while (!client.connected()) {
             Serial.print("Lost Connection to the MQTT Server, reconnecting");
             // Generate client name based on MAC address and last 8 bits of microsecond counter
