@@ -12,15 +12,18 @@ public:
 
     uint8_t pin;
     int rawValue;
-    
+    float thershold;
+
     TemperatureSensor(){
         // Default constructor
         pin = DEFAULT_TS_PIN;
+        thershold = 0.1;
         rawValue = 0;
     }
 
-    TemperatureSensor(const uint8_t& newPin){
+    TemperatureSensor(const uint8_t& newPin, const float &newThreashold){
         pin = newPin;
+        thershold = newThreashold;
         rawValue = 0;
     }
     
