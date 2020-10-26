@@ -136,7 +136,28 @@ public:
     }
 
     void sendMQTTMessage(const char* topic, const char* messageToSend){
-        client.publish(topic, messageToSend, true);
+        while (!client.connected()) {
+            Serial.print("Lost Connection to the MQTT Server, reconnecting");
+            // Generate client name based on MAC address and last 8 bits of microsecond counter
+            String clientName_str;
+            clientName_str += "esp8266-";
+            uint8_t mac[6];
+            WiFi.macAddress(mac);
+            clientName_str += macToStr(mac);
+            char* clientName = (char*) clientName_str.c_str();
+            //if connected, subscribe to the topic(s) we want to be notified about
+            if (client.connect(clientName)) {
+                Serial.println("\tMQTT Connected!");
+                delay(100);
+                client.subscribe(topic);
+                delay(100);
+                client.publish(topic, messageToSend, true);
+            }
+            //otherwise print failed for debugging
+            else {
+                Serial.println("\tFailed to connect  to the MQTT server."); abort();
+            }
+        }
     }
 };
 
