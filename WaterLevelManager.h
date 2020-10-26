@@ -1,8 +1,8 @@
 #include "include/WaterLevelSensor.h"
 
-#define WATER_LEVEL_PIN1 8 
-#define WATER_LEVEL_PIN2 9 
-#define WATER_LEVEL_PIN3 10 
+#define WATER_LEVEL_PIN1 D0
+#define WATER_LEVEL_PIN2 D1
+#define WATER_LEVEL_PIN3 D2 
 
 enum WaterLevel{
   High_Level,
@@ -18,7 +18,7 @@ WaterLevelSensor* WLS_Level3 = new WaterLevelSensor(WATER_LEVEL_PIN3);
 
 // WL represents the current water level (call the getter and setter)
 WaterLevel WL = WaterLevel::High_Level;
-uint8_t WL_Changed = false;
+uint8_t WL_Changed = 0;
 
 // This event is called when the water level changes, to add the functionalities required here.
 void OnChange(const WaterLevel &newWaterLevel){
@@ -29,7 +29,7 @@ void setWaterLevel(const WaterLevel& newWaterLevel){
     if (WL != newWaterLevel){
         WL = newWaterLevel;
         OnChange(newWaterLevel);
-        WL_Changed = true;
+        WL_Changed = 1;
     }
 }
 

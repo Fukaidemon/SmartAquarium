@@ -10,7 +10,7 @@ ConnectivityManager* CM = new ConnectivityManager("TOPNETE136FE54", "F57B95D1E6"
 
 void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   // Checks if the Water level has changed
-  if(WL_Changed){
+  if(WL_Changed == 1){
     // Sends an MQTT message
     if (sendMQTT)
       CM->sendMQTTMessage("AQUAIOT", getWaterLevelAsString().c_str());
@@ -20,12 +20,12 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
       Serial.print(getWaterLevelAsString());
       Serial.println();
     }
-    WL_Changed = false; // ReInitialize the status for an upcoming access
+    WL_Changed = 0; // ReInitialize the status for an upcoming access
   }
 }
 
 void ManageTemperatureData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
-    if (TMP_Changed){
+    if (TMP_Changed == 1){
       // Sends an MQTT message
       if (sendMQTT)
         CM->sendMQTTMessage("AQUAIOT", String(temperature).c_str());
@@ -35,7 +35,7 @@ void ManageTemperatureData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
         Serial.print(String(temperature));
         Serial.println();
       }
-      TMP_Changed = false;
+      TMP_Changed = 0;
     }
 }
 
