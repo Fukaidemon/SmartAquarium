@@ -13,7 +13,7 @@ void ManageWaterLevelData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
   if(WL_Changed == 1){
     // Sends an MQTT message
     if (sendMQTT)
-      CM->sendMQTTMessage("AQUAIOT", getWaterLevelAsString().c_str());
+      CM->sendMQTTMessage("AQUAIOTSLEAM2020", getWaterLevelAsString().c_str());
     // Sends on the serial
     if (debugSerial){
       Serial.print("Water level changed to : ");
@@ -28,7 +28,7 @@ void ManageTemperatureData(const uint8_t& sendMQTT, const uint8_t& debugSerial){
     if (TMP_Changed == 1){
       // Sends an MQTT message
       if (sendMQTT)
-        CM->sendMQTTMessage("AQUAIOT", String(temperature).c_str());
+        CM->sendMQTTMessage("AQUAIOTSLEAM2020", String(temperature).c_str());
       // Sends on the serial
       if (debugSerial){
         Serial.print("Temperature : ");
@@ -47,10 +47,12 @@ void setup() {
   // 0.1 sec delay
   delay(100);
   // Connect to the MQTT server
-  CM->connectToMQTT("AQUAIOT");
+  // CM->connectToMQTT("AQUAIOTSLEAM2020");
 }
 
 void loop() {
+  // This is called due to some connectivity issues with the server
+  CM->connectToMQTT("AQUAIOTSLEAM2020");
   // Water level sensors loop
   WaterLevelLoop();
   // Water level sensors Display/Send Data
