@@ -8,7 +8,7 @@ SmartAquarium is an academic project for a Smart Aquarium (IOT) using ESP3266 (N
 - Transmitting everything via MQTT to the Node-red server
 
 ## Current implementations
-We have 1 Temperature sensor and 3 water sensors connected to it.
+The Node MCU will have 1 Temperature sensor and 3 water sensors connected to it.
 ### Sensors
 The temperature sensor is meant to mesure the temperature of the water by sending an analogical value to the Arduino.
 The 3 water sensors are put one on top of the other in order to define 4 water levels :
