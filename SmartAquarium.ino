@@ -51,8 +51,12 @@ void setup() {
 }
 
 void loop() {
+
+  //Init the Connectivity Manager
+  CM->connect();
   // This is called due to some connectivity issues with the server
   CM->connectToMQTT("AQUAIOTSLEAM2020");
+
   // Water level sensors loop
   WaterLevelLoop();
   // Water level sensors Display/Send Data
@@ -61,4 +65,6 @@ void loop() {
   TemperatureLoop();
   // Temperature sensor Display/Send Data 
   ManageTemperatureData(true, true);
+
+  ESP.deepSleep(30e6);
 }
